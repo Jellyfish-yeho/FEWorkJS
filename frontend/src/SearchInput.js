@@ -1,14 +1,16 @@
 const TEMPLATE = '<input type="text">';
 
 class SearchInput {
-  constructor({ $target, onSearch }) {
+  constructor({ $target, onSearch, onRandomSearch }) {
     const $wrapper = document.createElement("section")
+    $target.appendChild($wrapper);
+
+    //검색 input 
     const $searchInput = document.createElement("input");
     this.$searchInput = $searchInput;
     this.$searchInput.placeholder = "고양이를 검색해보세요.|";
 
     $searchInput.className = "SearchInput";
-    $target.appendChild($wrapper);
     $wrapper.appendChild($searchInput);
 
     $searchInput.addEventListener("keyup", e => {
@@ -17,7 +19,17 @@ class SearchInput {
       }
     });
 
-    console.log("SearchInput created.", this);
+    //랜덤 버튼
+    const $randomButton = document.createElement("button");
+    this.$randomButton = $randomButton
+    this.$randomButton.className = "RandomButton"
+    this.$randomButton.textContent = "🐈랜덤냥🐈‍⬛"
+    $wrapper.appendChild(this.$randomButton)
+
+    this.$randomButton.addEventListener("click", e => {
+      onRandomSearch()
+    });
+
   }
   render() {}
 }
