@@ -8,60 +8,73 @@ class App {
     this.$target = $target;
 
     this.Loading = new Loading({
-      $target
+      $target,
     });
 
     this.searchInput = new DarkModeToggle({
-      $target
+      $target,
     });
 
     this.searchInput = new SearchInput({
       $target,
-      onSearch: keyword => {
+      onSearch: (keyword) => {
         //loading show
-        this.Loading.show()
+        this.Loading.show();
 
-        api.fetchCats(keyword).then(({ data }) =>{ 
-          this.setState(data)
+        api.fetchCats(keyword).then(({ data }) => {
+          this.setState(data);
           //loading hide
-          this.Loading.hide()
+          this.Loading.hide();
+          //localStorage에 저장
+          this.saveResult(data);
         });
       },
-      onRandomSearch : () => {
+      onRandomSearch: () => {
         //loading show
-        this.Loading.show()
+        this.Loading.show();
 
-        api.fetchRandomCats().then(({ data }) =>{ 
-          this.setState(data)
+        api.fetchRandomCats().then(({ data }) => {
+          this.setState(data);
           //loading hide
-          this.Loading.hide()
+          this.Loading.hide();
         });
-      }
+      },
     });
 
     this.searchResult = new SearchResult({
       $target,
       initialData: this.data,
-      onClick: cat => {
+      onClick: (cat) => {
         this.imageInfo.showDetail({
           visible: true,
-          cat
+          cat,
         });
-      }
+      },
     });
 
     this.imageInfo = new ImageInfo({
       $target,
       data: {
         visible: false,
-        image: null
-      }
+        image: null,
+      },
     });
+
+    this.init()
   }
 
   setState(nextData) {
     console.log(this);
     this.data = nextData;
     this.searchResult.setState(nextData);
+  }
+
+  saveResult(result) {
+    localStorage.setItem("lastResult", JSON.stringify(result));
+  }
+
+  init(){
+    let lastResult = localStorage.getItem("lastResult") ? JSON.parse(localStorage.getItem("lastResult")) : []
+    this.setState(lastResult)
   }
 }

@@ -21,6 +21,7 @@ class SearchResult {
     this.render();
   }
 
+
   render() {
     this.$searchResult.innerHTML = this.data
       .map(
