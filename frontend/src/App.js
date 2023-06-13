@@ -3,6 +3,7 @@ console.log("app is running!");
 class App {
   $target = null;
   data = [];
+  page = 1;
 
   constructor($target) {
     this.$target = $target;
@@ -50,6 +51,23 @@ class App {
           cat,
         });
       },
+      onNextPage : () => {
+        console.log("다음페이지 로딩")
+
+        const lastResult = localStorage.getItem("keywordHistory") ? localStorage.getItem("keywordHistory").split(",") : []
+        const lastKeyword = lastResult[0];
+
+        const page = this.page + 1;
+
+        api.fetchCatsByPage(lastKeyword, 2).then(({ data }) => {
+          //과거의 데이터에 새 데이터를 합침
+          let newData = this.data.concat(data)
+          this.setState(newData);
+          this.page = page
+          //loading hide
+          this.Loading.hide();
+        }); 
+      }
     });
 
     this.imageInfo = new ImageInfo({
@@ -64,7 +82,6 @@ class App {
   }
 
   setState(nextData) {
-    console.log(this);
     this.data = nextData;
     this.searchResult.setState(nextData);
   }
