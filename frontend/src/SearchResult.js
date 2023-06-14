@@ -4,7 +4,7 @@ class SearchResult {
   onClick = null;
 
   constructor({ $target, initialData, onClick, onNextPage }) {
-    const $wrapper = document.createElement("section")
+    const $wrapper = document.createElement("section");
     this.$searchResult = document.createElement("section");
     this.$searchResult.className = "SearchResult";
     $wrapper.appendChild(this.$searchResult);
@@ -22,36 +22,33 @@ class SearchResult {
     this.render();
   }
 
-  //엘리먼트가 뷰포트에 보이는지 확인
-  isElementInViewport(el){
-    const rect = el.getBoundingClientRect() //el의 좌표 정보. 좌측 상단 꼭지점 기준
-    return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && //뷰포트 창의 크기보다 작음
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    )
-  }
+  listObserver = new IntersectionObserver((items, observer) => {
+    // console.log(items)
+    //items는 뭔가 변화가 있는 요소.
+    items.forEach((item) => {
+      //isIntersection : 뷰포트에 해당 아이템이 존재하는지, boolean 값
+      if (item.isIntersecting) {
+        //item이 화면에 보일 때 : 로드되기 전 납작한 상태도 보이는 것으로 잡음
+        //lazy load
+        item.target.querySelector("img").src =
+          item.target.querySelector("img").dataset.src;
 
-  //dom 목록에 스크롤 이벤트 등록
-  applyEventToElement = (items)=>{
-    document.addEventListener("scroll", ()=>{
-      items.forEach((el, index) => {
-        //엘리먼트가 화면에 나오면서 index가 마지막일 때(items.length-1)
-        if( this.isElementInViewport(el) && items.length - 1 === index ){
-          //다음 페이지 로딩
-          this.onNextPage()
+        //마지막 요소를 찾아내서 : 목록 데이터의 length = 각 요소의 번호
+        let dataIndex = Number(item.target.dataset.index);
+        if (dataIndex + 1 === this.data.length) {
+          //마지막 요소라면 next page 호출
+          this.onNextPage();
         }
-      })
-    })
-  }
+      }
+    });
+  });
 
   render() {
     this.$searchResult.innerHTML = this.data
       .map(
-        cat => `
-          <div class="item">
-            <img src=${cat.url} alt=${cat.name} />
+        (cat, index) => `
+          <div class="item" data-index=${index}>
+            <img src="https://via.placeholder.com/200x300" data-src=${cat.url} alt=${cat.name} />
           </div>
         `
       )
@@ -61,9 +58,8 @@ class SearchResult {
       $item.addEventListener("click", () => {
         this.onClick(this.data[index]);
       });
+      //observer 등록
+      this.listObserver.observe($item);
     });
-
-    let listItems = this.$searchResult.querySelectorAll(".item")
-    this.applyEventToElement(listItems)
   }
 }
