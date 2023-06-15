@@ -23,7 +23,7 @@ class App {
         this.Loading.show();
 
         api.fetchCats(keyword).then(({ data }) => {
-          this.setState(data);
+          this.setState(data ? data : []);
           //loading hide
           this.Loading.hide();
           //localStorage에 저장
