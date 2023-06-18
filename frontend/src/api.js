@@ -1,10 +1,7 @@
-const API_ENDPOINT =
-  // "https://rhdd0roxs5.execute-api.ap-northeast-2.amazonaws.com/dev"
-  "http://localhost:4001";
+import config from "./config.js"
 
-const REQUEST_ERROR = {
-  '500' : { msg: "요청 실패" }
-}
+const {API_ENDPOINT, REQUEST_ERROR} = config;
+
 
 //fetch 를 진행할 메소드 부분
 const request = async (url) => {
@@ -17,7 +14,7 @@ const request = async (url) => {
       throw REQUEST_ERROR[request.status];
     }
   } catch (error) {
-    alert(error.msg)//유저에게 요청 실패 알림
+    alert(error.message)//유저에게 요청 실패 알림
     return {data : null}//프론트 데이터 처리를 위해 리턴
   }
 };
@@ -37,3 +34,5 @@ const api = {
     return request(`${API_ENDPOINT}/api/cats/${id}`);
   },
 };
+
+export default api

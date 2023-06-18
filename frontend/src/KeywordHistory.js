@@ -1,3 +1,5 @@
+import uniqueArray from "./utils/uniquerArray.js";
+
 class KeywordHistory {
   $keywordHistory = null;
   data = null;
@@ -25,6 +27,8 @@ class KeywordHistory {
     let keywordHistory = this.getHistory()
     //최근 순서대로 하기 위해 unshift 사용
     keywordHistory.unshift(keyword);
+    //중복 제거
+    keywordHistory = uniqueArray(keywordHistory)
     //5개 제한
     keywordHistory = keywordHistory.slice(0, 5);
     localStorage.setItem("keywordHistory", keywordHistory.join(","));
@@ -43,6 +47,18 @@ class KeywordHistory {
     this.render();
   }
 
+  bindEvent (){
+    //전체 공유 변수이기 때문에 별도 인자 받을 필요가 없음
+    this.$keywordHistory
+    .querySelectorAll("li button")
+    .forEach(($item, index) => {
+      $item.addEventListener("click", (e) => {
+        //데이터에서 index에 해당하는 item을 가져온다.
+        this.onSearch(this.data[index]);
+      });
+    });
+  }
+
   render() {
     this.$keywordHistory.innerHTML = this.data
       .map(
@@ -51,14 +67,8 @@ class KeywordHistory {
       `
       )
       .join(""); //HTML 은 join("")해줘야 콤마가 없음
-
-    this.$keywordHistory
-      .querySelectorAll("li button")
-      .forEach(($item, index) => {
-        $item.addEventListener("click", (e) => {
-          //데이터에서 index에 해당하는 item을 가져온다.
-          this.onSearch(this.data[index]);
-        });
-      });
+      this.bindEvent()
   }
 }
+
+export default KeywordHistory
