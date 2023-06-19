@@ -6,13 +6,14 @@ import SearchInput from "./SearchInput.js"
 import SearchResult from "./SearchResult.js"
 import ImageInfo from "./ImageInfo.js"
 import api from "./api.js";
+import Banner from "./Banner.js";
 
 class App {
   $target = null;
   DEFAULT_PAGE = 1;
   data = {
     items : [],
-    page : DEFAULT_PAGE,
+    page : this.DEFAULT_PAGE,
   }
 
   constructor($target) {
@@ -28,14 +29,14 @@ class App {
 
     this.searchInput = new SearchInput({
       $target,
-      onSearch: (keyword) => {
+      onSearch: (keyword, limit) => {
         //loading show
         this.Loading.show();
 
-        api.fetchCats(keyword).then(({ data }) => {
+        api.fetchCatsWithLimit(keyword, limit).then(({ data }) => {
           this.setState({
             items : data,
-            page : DEFAULT_PAGE
+            page : this.DEFAULT_PAGE
           });
           //loading hide
           this.Loading.hide();
@@ -50,13 +51,18 @@ class App {
         api.fetchRandomCats().then(({ data }) => {
           this.setState({
             items : data,
-            page : DEFAULT_PAGE
+            page : this.DEFAULT_PAGE
           });
           //loading hide
           this.Loading.hide();
         });
       },
     });
+
+    //banner
+    this.banner = new Banner({
+      $target,
+    })
 
     this.searchResult = new SearchResult({
       $target,
@@ -110,7 +116,7 @@ class App {
     let lastResult = localStorage.getItem("lastResult") ? JSON.parse(localStorage.getItem("lastResult")) : []
     this.setState({
       items : lastResult,
-      page : DEFAULT_PAGE
+      page : this.DEFAULT_PAGE
     })
   }
 }

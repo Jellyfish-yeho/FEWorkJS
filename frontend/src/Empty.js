@@ -2,11 +2,10 @@ class Empty {
   $empty = null;
   data = null;
 
-  constructor({ $target }) {
-    const$empty = document.createElement("div");
+  constructor( { $target } ) {
+    const $empty = document.createElement("div");
     this.$empty = $empty;
     this.$empty.className = "Empty"
-
     $target.appendChild(this.$empty);
 
     //초기 상태

@@ -5,6 +5,7 @@ const TEMPLATE = '<input type="text">';
 class SearchInput {
   constructor({ $target, onSearch, onRandomSearch }) {
     const $wrapper = document.createElement("section");
+    $wrapper.className = "SearchInputSection";
     $target.appendChild($wrapper);
 
     //검색 input
@@ -16,12 +17,27 @@ class SearchInput {
     $wrapper.appendChild($searchInput);
 
     $searchInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        onSearch(e.target.value);
+      if (e.key === "Enter" && e.target.value.length !== 0) {
+        onSearch(e.target.value, this.$limitCount.value);
         //최근 키워드 저장
         this.KeywordHistory.addKeyword(e.target.value)
       }
     });
+
+    //셀렉트 UI 
+    const $limitCount = document.createElement('select');
+    this.$limitCount = $limitCount;
+    this.$limitCount.className = "LimitCount";
+
+    const LimitCountOptions = [10, 25, 50];
+    LimitCountOptions.map(option => {
+      let $option = document.createElement("option");
+      $option.value = option;
+      $option.textContent = `${option}개`;
+      this.$limitCount.appendChild($option);
+    })
+
+    $wrapper.appendChild(this.$limitCount)
 
     //랜덤 버튼
     const $randomButton = document.createElement("button");
@@ -35,7 +51,7 @@ class SearchInput {
     });
 
     this.KeywordHistory = new KeywordHistory({
-      $target,
+      $target : $wrapper,
       onSearch,
     });
   }

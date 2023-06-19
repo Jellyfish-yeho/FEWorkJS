@@ -17,7 +17,7 @@ class SearchResult {
     this.onNextPage = onNextPage;
 
     this.Empty = new Empty({
-      $wrapper //바깥으로 나가지 않도록 wrapper 안에 생성
+      $target : $wrapper, //바깥으로 나가지 않도록 wrapper 안에 생성
     })
 
     this.render();
@@ -62,6 +62,9 @@ class SearchResult {
         (cat, index) => `
           <div class="item" data-index=${index}>
             <img src="https://via.placeholder.com/200x300" data-src=${cat.url} alt=${cat.name} />
+            <div class="content">
+              ${cat.name}
+            </div>
           </div>
         `
       )

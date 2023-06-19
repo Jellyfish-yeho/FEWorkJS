@@ -14,12 +14,22 @@ class ImageInfo {
 
     this.render();
   }
-
+  
   setState(nextData) {
     this.data = nextData;
     this.render();
+    this.setFade(nextData.visible)
   }
-  //고양이 상세 정보
+  
+  setFade(visible){
+    if(visible){
+      this.$imageInfo.classList.add('show')
+    }  else{
+      this.$imageInfo.classList.remove('show')
+    }
+  }
+
+    //고양이 상세 정보
   async showDetail(data) {
     //상세 정보 요청
     const detailInfo = await api.fetchCatDetail(data.cat.id);
@@ -56,13 +66,6 @@ class ImageInfo {
             <div>태생: ${origin}</div>
           </div>
         </div>`;
-      this.$imageInfo.style.display = "block";
-
-      // //닫기 버튼
-      // this.$imageInfo.querySelector(".close").addEventListener("click", (e)=>{
-      //   console.log(e)
-      //   this.closeImageInfo()
-      // })
 
       //esc 버튼
       document.addEventListener("keydown", (e) => {
@@ -73,14 +76,12 @@ class ImageInfo {
       //배경, 닫기버튼
       this.$imageInfo.addEventListener("click", (e) => {
         if (
-          e.target.className === "ImageInfo" ||
+          e.target.classList.contains("ImageInfo") ||
           e.target.className === "close"
         ) {
           this.closeImageInfo();
         }
       });
-    } else {
-      this.$imageInfo.style.display = "none";
     }
   }
 }
